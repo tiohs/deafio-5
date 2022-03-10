@@ -14,6 +14,10 @@ class CreateTransactionService {
   }
 
   public execute({ title, value, type }: Request): Transaction {
+    const { total } = this.transactionsRepository.getBalance();
+    if (type === 'outcome' && value > total) {
+      throw Error('This transitions is already booked');
+    }
     const transactions = this.transactionsRepository.create({
       title,
       type,
